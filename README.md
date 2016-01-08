@@ -16,12 +16,14 @@ docker run -i -t cannin/r-devel bash
 ```
 
 ## Clone Bioconductor GitHub Package Repository
+
+NOTE: Replace PACKAGE and VERSION with the name/version of the package
 ```
-git clone https://github.com/Bioconductor-mirror/PACKAGE/tree/master
+git clone https://github.com/Bioconductor-mirror/PACKAGE.git
 ```
 
 ## Build R Package
 ```
-R CMD BUILD PACKAGE
-R CMD CHECK PACKAGE_VERSION.tar.gz
+R CMD build PACKAGE
+R CMD check PACKAGE_VERSION.tar.gz
 ```

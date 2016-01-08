@@ -99,3 +99,5 @@ RUN cd /usr/local/bin \
 
 # Install additional software
 RUN apt-get install -y links nano git
+
+# Install basic R packages
