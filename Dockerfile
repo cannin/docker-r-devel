@@ -91,13 +91,39 @@ RUN echo "R_LIBS=\${R_LIBS-'/usr/local/lib/R/site-library:/usr/local/lib/R/libra
 ## Set default CRAN repo
 RUN echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /usr/local/lib/R/etc/Rprofile.site
 
-RUN cd /usr/local/bin \
-&& mv R Rdevel \
-&& mv Rscript Rscriptdevel \
-&& ln -s Rdevel RD \
-&& ln -s Rscriptdevel RDscript
+#RUN cd /usr/local/bin \
+#&& mv R Rdevel \
+#&& mv Rscript Rscriptdevel \
+#&& ln -s Rdevel RD \
+#&& ln -s Rscriptdevel RDscript
 
 # Install additional software
 RUN apt-get install -y links nano git
 
-# Install basic R packages
+# Install software needed for common R libraries
+# For RCurl
+RUN apt-get -y install libcurl4-openssl-dev
+# For rJava
+RUN apt-get -y install libpcre++-dev
+RUN apt-get -y install openjdk-7-jdk
+# For XML
+RUN apt-get -y install libxml2-dev
+# For git2r
+RUN apt-get -y install libgit2-dev
+
+##### R: COMMON PACKAGES
+# To let R find Java
+RUN R CMD javareconf
+
+# Update pandoc
+RUN apt-get -y install libgmp10
+RUN wget https://github.com/jgm/pandoc/releases/download/1.15.1/pandoc-1.15.1-1-amd64.deb
+RUN dpkg -i --force-overwrite pandoc-1.15.1-1-amd64.deb
+
+# Install common R packages
+RUN R -e "install.packages(c('devtools', 'httr', 'igraph', 'knitr', 'plyr', 'rJava', 'stringr', 'testthat'), repos='http://cran.rstudio.com/')"
+
+# Install R packages
+COPY installRPackages.R /sbin/installRPackages.R
+RUN chmod +x /sbin/installRPackages.R
+RUN /sbin/installRPackages.R
